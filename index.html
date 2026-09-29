@@ -547,6 +547,7 @@ fieldset.field, fieldset.prize { border: 0; padding: 0; margin: 0; }
   .route-label { display: none; }
   .route { margin: 8px 0; }
 }
+.stage { touch-action: manipulation; -webkit-user-select: none; user-select: none; }
 
 </style>
 </head>
@@ -1810,6 +1811,23 @@ AAG.campaign = {
         for (let r = 0; r < 6; r++) px.R(b, x + i + Math.floor(r / 2), y + 1 + r, 6 - r, 1, c);
       }
     }
+    // 별빛 전구 줄 : 가는 길에 모은 별 하나당 전구 2개가 켜져요
+    const stars = G.W.stars, per = 2, n = stars.length * per;
+    const lx0 = x + 4, lx1 = x + w - 4;
+    for (let i = 0; i <= lx1 - lx0; i++) {
+      const tt = i / (lx1 - lx0);
+      px.R(b, lx0 + i, Math.round(90 + 4 * tt * (1 - tt) * 7), 1, 1, P.ink2);
+    }
+    const lit = Z.lit || 0;
+    for (let k = 0; k < n; k++) {
+      const tt = (k + 0.5) / n, bx = Math.round(lx0 + (lx1 - lx0) * tt), by = Math.round(90 + 4 * tt * (1 - tt) * 7) + 1;
+      const st = stars[Math.floor(k / per)], on = k < lit;
+      let col = P.metal;
+      if (on) col = st && st.air ? ['#ffe27a', '#ffb3c7', '#9fe6d6', '#b9d2ff'][(Math.floor(t * 3) + k) % 4] : '#ffe27a';
+      if (on) { b.save(); b.globalAlpha = 0.45; px.disc(b, bx + 1, by + 2, 4, '#fff6c8'); b.restore(); }
+      px.R(b, bx, by - 1, 3, 1, P.ink2); px.R(b, bx - 1, by, 5, 4, P.ink); px.R(b, bx, by, 3, 3, col);
+      if (on) px.R(b, bx, by, 1, 1, '#ffffff');
+    }
     // 풍선
     [[x + 64, 96, P.pink], [x + 186, 90, P.blue], [x + 196, 98, P.yellow]].forEach((p, i) => {
       const by = p[1] + Math.round(Math.sin(t * 1.6 + i) * 1.5);
@@ -2550,6 +2568,9 @@ AAG.campaign = {
     item: t => { [72, 76, 79, 84].forEach((n, i) => tone(N(n), t + i * 0.09, 0.2, { type: 'triangle', vol: 0.2 })); tone(N(88), t + 0.36, 0.5, { type: 'triangle', vol: 0.16 }); },
     chime: t => { tone(N(76), t, 1.1, { type: 'sine', vol: 0.3 }); tone(N(72), t + 0.45, 1.3, { type: 'sine', vol: 0.3 }); },
     voice: t => { for (let i = 0; i < 9; i++) tone(N(57 + ((i * 7) % 5)), t + i * 0.09, 0.08, { type: 'triangle', vol: 0.07 }); },
+    hop: t => tone(N(67), t, 0.12, { type: 'square', vol: 0.06, slide: 260 }),
+    starAir: t => [88, 92, 95, 100].forEach((n, i) => tone(N(n), t + i * 0.05, 0.1, { vol: 0.06 })),
+    bulb: t => tone(N(84), t, 0.08, { type: 'triangle', vol: 0.08 }),
     star: t => { tone(N(88), t, 0.06, { vol: 0.05 }); tone(N(95), t + 0.05, 0.1, { vol: 0.05 }); },
     door: t => { tone(N(79), t, 0.12, { type: 'sine', vol: 0.14 }); tone(N(84), t + 0.1, 0.2, { type: 'sine', vol: 0.14 }); },
     bus: t => { tone(N(50), t, 0.3, { type: 'sawtooth', vol: 0.04 }); tone(N(55), t + 0.32, 0.35, { type: 'sawtooth', vol: 0.04 }); },
@@ -2715,6 +2736,12 @@ AAG.campaign = {
     h.arcOn = false;
   };
   E.jump = () => { E.hero.jumpT = 0.36; };
+  /* 참여자가 누르는 점프 (이동 중에만, 안 눌러도 별은 자동으로 모여요) */
+  E.playerJump = function () {
+    const h = E.hero;
+    if (!h || E.room || !h.walking || h.jumpT > 0 || h.arcOn) return false;
+    E.jump(); E.sfx('hop'); return true;
+  };
 
   /* ---------- 카메라 ---------- */
   const defaultY = z => WD.H - (E.VH / z) / 2;
@@ -2868,7 +2895,9 @@ AAG.campaign = {
       if (!E.room) {
         E.W.stars.forEach(s => {
           if (!s.taken && Math.abs(h.x - s.x) < 5) {
-            s.taken = true; E.burst(s.x, s.y, 'spark', 10); E.sfx('star');
+            s.taken = true;
+            s.air = h.jumpT > 0;                                  // 점프해서 잡은 별 = 반짝 보너스
+            E.burst(s.x, s.y, 'spark', s.air ? 22 : 10); E.sfx(s.air ? 'starAir' : 'star');
             if (!(h.jumpT > 0)) E.jump();
             E.tween(s, { pop: 1 }, 400, 'out');
           }
@@ -3512,6 +3541,16 @@ AAG.campaign = {
     A.initLooks();
     UI.init();
     E.init(canvas);
+    // 점프 : 게임 화면을 누르거나 스페이스바·위쪽 화살표 (이동 중에만)
+    document.getElementById('stage').addEventListener('pointerdown', e => {
+      if (e.target.closest('button, a, input')) return;
+      if (UI.mode === 'travel') E.playerJump();
+    });
+    document.addEventListener('keydown', e => {
+      if (UI.mode !== 'travel' || (e.key !== ' ' && e.key !== 'ArrowUp')) return;
+      if (e.target.closest && e.target.closest('button, a, input, textarea, select')) return;
+      if (E.playerJump()) e.preventDefault();
+    });
   };
 
   game.themeList = () => A.themeOrder.map(id => A.themes[id]);
@@ -3544,7 +3583,7 @@ AAG.campaign = {
       const sc = W.scenes[i], stg = sc.stage, def = sc.def;
       const kicker = 'STAGE ' + (i + 1);
       UI.hud.setStage(kicker);
-      UI.narrate({ kicker, title: stg.title, sub: (stg.travel || '') + ' · 가는 길에 ⭐도 모아 봐요', theme: T, route: i + 1 });
+      UI.narrate({ kicker, title: stg.title, sub: (stg.travel || '') + ' · 화면을 톡! 누르면 점프해요', theme: T, route: i + 1 });
       UI.setScene(stg.travel || stg.title);
       E.follow = true; h.bouncy = true;
       await E.walkTo(def.stopX(sc.st));
@@ -3598,6 +3637,16 @@ AAG.campaign = {
     await E.walkTo(W.goalX);
     if (!alive(id)) return;
     h.bouncy = false; h.dir = 1; h.carry = 'flag';
+    // 모은 별로 광장 전구 켜기
+    const bulbs = W.stars.filter(s => s.taken).length * 2;
+    UI.narrate({ kicker: 'FINAL STAGE', title: '모은 별빛으로 광장이 밝아져요!', sub: '', theme: T, route: T.route.length - 1 });
+    W.plaza.lit = 0;
+    let lastBulb = 0;
+    await E.tween(W.plaza, { lit: bulbs }, 300 + bulbs * 90, 'linear', () => {
+      const k = Math.floor(W.plaza.lit);
+      if (k > lastBulb) { lastBulb = k; if (k % 2 === 0) A.audio.play('bulb'); }
+    });
+    W.plaza.lit = bulbs;
     A.audio.play('fanfare');
     for (let k = 0; k < 4; k++) E.after(k * 250, () => E.burst(h.x + (Math.random() - 0.5) * 80, 70, 'confetti', 26));
     E.jump(); E.after(500, () => E.jump());
