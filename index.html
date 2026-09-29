@@ -483,6 +483,8 @@ fieldset.field, fieldset.prize { border: 0; padding: 0; margin: 0; }
 @media (min-width: 560px) { .cp-actions { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 560px) { .feat-grid { grid-template-columns: 1fr; } .feat-box { min-height: 54px; } }
 
+.field-help { margin: -2px 0 2px; font-size: 14px; line-height: 1.5; color: var(--ink-soft); }
+
 </style>
 </head>
 <body>
@@ -567,6 +569,24 @@ window.AAG = window.AAG || {};
 
 </script>
   <!-- 2) 스테이지 데이터 (캠페인 버전) : 첫 번째로 등록된 테마가 기본값 -->
+  <!--    운영자 설정(버전 버튼 보이기 등) -->
+  <script>
+/* =========================================================
+ * data/settings.js — 운영자 설정
+ * ---------------------------------------------------------
+ * showVersionSwitch : 시작 화면에 [버전] 버튼(마을축제/영화/학교)을 보여줄지
+ *   false(기본) → 참여자는 버전을 바꿀 수 없어요.
+ *                 운영자는 주소 끝을 바꿔서 버전을 정합니다.
+ *                   …/index.html          → 마을축제(기본)
+ *                   …/index.html#film     → 배리어프리 영화
+ *                   …/index.html#school   → 학교 교육
+ *   true         → 시작 화면에 버전 버튼이 보여요(시연·교육용).
+ * ========================================================= */
+AAG.settings = {
+  showVersionSwitch: false
+};
+
+</script>
   <script>
 /* =========================================================
  * data/theme-village.js — 기본 버전: 마을축제
@@ -970,6 +990,7 @@ AAG.campaign = {
   place: { label: '장소명', placeholder: '예: 골목카페, 동네 도서관, OO마트' },
   area: {
     label: '지역 또는 동네', placeholder: '예: 종로구 서촌, 혜화동',
+    help: '목록에 없으면 직접 적어 주세요. "혜화역 근처"처럼 대략 적어도 괜찮아요.',
     suggestions: ['종로구 서촌', '종로구 혜화동', '종로구 창신동', '종로구 삼청동', '종로구 익선동', '종로구 부암동', '종로구 평창동', '종로구 이화동']
   },
 
@@ -3241,7 +3262,8 @@ AAG.campaign = {
         '</div>' +
         '<div class="field">' +
           '<label for="cpArea">' + esc(C.area.label) + ' <span class="req">필수</span></label>' +
-          '<input id="cpArea" name="area" type="text" maxlength="40" autocomplete="off" list="cpAreaList" placeholder="' + esc(C.area.placeholder) + '" aria-describedby="cpAreaErr">' +
+          (C.area.help ? '<p class="field-help" id="cpAreaHelp">' + esc(C.area.help) + '</p>' : '') +
+          '<input id="cpArea" name="area" type="text" maxlength="40" autocomplete="off" list="cpAreaList" placeholder="' + esc(C.area.placeholder) + '" aria-describedby="cpAreaHelp cpAreaErr">' +
           '<datalist id="cpAreaList">' + (C.area.suggestions || []).map(a => '<option value="' + esc(a) + '">').join('') + '</datalist>' +
           '<p class="err" id="cpAreaErr"></p>' +
         '</div>' +
@@ -3449,7 +3471,7 @@ AAG.campaign = {
   game.run = async function () {
     const id = ++runId, T = game.theme, W = E.W, h = E.hero;
     const found = [];
-    await UI.showStart(T, { themes: game.themeList(), onTheme: tid => { if (tid !== T.id) game.load(tid); } });
+    await UI.showStart(T, { themes: (A.settings && A.settings.showVersionSwitch) ? game.themeList() : [], onTheme: tid => { if (tid !== T.id) game.load(tid); } });
     if (!alive(id)) return;
     A.audio.unlock(); A.audio.play('tap');
     UI.hideStart();
