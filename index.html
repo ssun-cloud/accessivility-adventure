@@ -3540,6 +3540,29 @@ AAG.campaign = {
       };
     },
 
+    /* 설정 탭 읽기 : 구글 시트 '설정' 탭의 체크박스(장소 추천·한마디·경품)를 게임 시작 때 받아 옵니다.
+     * 못 받아 오면(인터넷 끊김 등) 이 기기에 마지막으로 받은 설정 → 그것도 없으면 파일 안의 기본값을 씁니다. */
+    remote: null,
+    loadSettings() {
+      const KEY = 'aag.settings.v1';
+      try { const c = JSON.parse(localStorage.getItem(KEY) || 'null'); if (c && typeof c === 'object') A.sheets.remote = c; } catch (e) { /* 무시 */ }
+      const url = ((A.campaign && A.campaign.endpoint) || '').trim();
+      if (!url || !window.fetch) return Promise.resolve(A.sheets.remote);
+      const ctl = window.AbortController ? new AbortController() : null;
+      const t = setTimeout(() => { if (ctl) ctl.abort(); }, 6000);
+      return fetch(url + (url.indexOf('?') < 0 ? '?' : '&') + 'settings=1', { method: 'GET', signal: ctl ? ctl.signal : undefined })
+        .then(r => r.json())
+        .then(j => {
+          if (j && j.settings && typeof j.settings === 'object' && Object.keys(j.settings).length) {
+            A.sheets.remote = j.settings;
+            try { localStorage.setItem(KEY, JSON.stringify(j.settings)); } catch (e) { /* 무시 */ }
+          }
+          return A.sheets.remote;
+        })
+        .catch(() => A.sheets.remote)
+        .finally(() => clearTimeout(t));
+    },
+
     /* 게임 기록 : 시작·완료 횟수만 보냅니다(이름·연락처 등 개인정보 없음).
      * 결과를 기다리지 않고 조용히 보내며, 실패해도 게임에는 영향이 없어요. */
     newPlayId() { return 'G' + newId().slice(1); },
@@ -3606,7 +3629,9 @@ AAG.campaign = {
   const memoryOptions = () => flow().memory || C().memory.options;
   const missionList = () => flow().missions || C().mission.list;          // 예전 흐름용(기본 흐름에서는 안 씀)
   const actionList = () => flow().actions || C().action.list;
-  const mods = () => Object.assign({ placeRecommendation: true, feedback: false, prize: true }, C().modules || {}, flow().modules || {});
+  // 우선순위 : 구글 시트 '설정' 탭 → 테마 파일 campaignFlow.modules → campaign.js modules
+  const mods = () => Object.assign({ placeRecommendation: true, feedback: false, prize: true }, C().modules || {}, flow().modules || {},
+    (A.sheets && A.sheets.remote && ctx.theme && A.sheets.remote[ctx.theme.id]) || {});
   const hasFinish = () => { const m = mods(); return !!(m.feedback || (m.prize && C().prize)); };
   const curAction = () => actionList().find(a => a.key === ctx.s.action) || null;
 
@@ -4224,6 +4249,7 @@ AAG.campaign = {
     return A.themes[id] ? id : A.themeOrder[0];
   }
   function boot() {
+    if (A.sheets && A.campaign && A.campaign.enabled) A.sheets.loadSettings();   // 시트 '설정' 탭 (기다리지 않고 뒤에서)
     A.game.init(document.getElementById('view'));
     A.game.load(pickTheme());
   }
