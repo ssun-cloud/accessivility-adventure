@@ -890,7 +890,7 @@ AAG.registerTheme({
     title: 'MISSION COMPLETE!',
     sub: '접근성 아이템 3개를 모두 찾았어요!',
     message: '사람마다 이동하고, 보고, 듣고, 정보를 확인하는 방법은 달라요.\n방법이 다양해지면 더 많은 사람이 함께 이용할 수 있어요.',
-    next: '우리 동네도 한번 떠올려볼까요?',
+    next: '내가 해볼 작은 실천도 찾아볼까요?',
     replay: '다시 모험하기',
     items: '내가 찾은 아이템 보기'
   }
@@ -1030,7 +1030,7 @@ AAG.registerTheme({
     title: 'MISSION COMPLETE!',
     sub: '접근성 아이템 3개를 모두 찾았어요!',
     message: '사람마다 영화를 보고, 듣고, 즐기는 방법은 달라요.\n방법이 다양해지면 더 많은 관객이 함께 즐길 수 있어요.',
-    next: '우리 동네도 한번 떠올려볼까요?',
+    next: '내가 해볼 작은 실천도 찾아볼까요?',
     replay: '다시 모험하기',
     items: '내가 찾은 아이템 보기'
   }
@@ -1171,7 +1171,7 @@ AAG.registerTheme({
     title: 'MISSION COMPLETE!',
     sub: '접근성 아이템 3개를 모두 찾았어요!',
     message: '친구마다 이동하고, 배우고, 이야기하는 방법은 달라요.\n방법이 다양해지면 모두가 함께 배울 수 있어요.',
-    next: '우리 동네도 한번 떠올려볼까요?',
+    next: '내가 해볼 작은 실천도 찾아볼까요?',
     replay: '다시 모험하기',
     items: '내가 찾은 아이템 보기'
   }
@@ -1282,14 +1282,6 @@ AAG.campaign = {
     doneNote: '남겨주신 이야기도 잘 받았어요.'
   },
 
-  /* (예전 흐름용 — 지금 기본 흐름에서는 쓰지 않아요) 우리 동네에도 있을까요? */
-  fork: {
-    title: '게임에서 찾은 접근성, 우리 동네에도 있을까요?',
-    lead: '이용하면서 편했던 장소가 떠오른다면 알려주세요.',
-    yes: '떠오르는 장소가 있어요',
-    no: '아직 없어요. 앞으로 찾아볼래요'
-  },
-
   /* ③-1 장소 추천 */
   placeStep: {
     title: '우리 동네 장소 기록하기',
@@ -1306,24 +1298,6 @@ AAG.campaign = {
   },
   reassure: '완벽한 곳이 아니어도 괜찮아요.\n이용하면서 편했던 점 하나만 알려주세요.',
   reviewNote: '남겨 주신 장소는 바로 공개되지 않아요. 담당자가 확인한 뒤 캠페인 자료로 활용하며, “접근성이 완벽한 곳”이라는 인증은 아니에요.',
-
-  /* (예전 흐름용 — 지금 기본 흐름에서는 쓰지 않아요) 오늘의 접근성 미션 (무작위 1개) */
-  mission: {
-    title: '오늘의 접근성 미션',
-    body: '다음에 동네를 걸을 때\n평소에는 지나쳤던 입구, 안내판, 메뉴와 공간을 한번 살펴보세요.',
-    question: '사람마다 이곳을 어떻게 이용할 수 있을까?',
-    reroll: '다른 미션 보기',
-    save: '미션 카드 저장하기',
-    saveHint: '이미지를 길게 누르거나(휴대폰) 오른쪽 클릭해서 저장할 수 있어요.',
-    next: '미션 받고 다음으로',
-    list: [
-      { key: 'mission_step_free', text: '계단 없이 들어갈 수 있는 가게 하나 찾아보기', icon: 'ramp' },
-      { key: 'mission_sound_text', text: '소리와 글자로 함께 안내하는 곳 찾아보기', icon: 'text' },
-      { key: 'mission_multi_info', text: '메뉴나 정보를 여러 방법으로 확인할 수 있는 곳 찾아보기', icon: 'multi' },
-      { key: 'mission_tactile', text: '우리 동네 점자블록을 찾아보고, 그 위가 비어 있는지 살펴보기', icon: 'tactile' },
-      { key: 'mission_clear_sign', text: '안내가 이해하기 쉬운 장소 찾아보기', icon: 'bigtext' }
-    ]
-  },
 
   /* ④ 마무리 — 경품 추첨 (modules.prize 가 true 일 때만) */
   prize: {
@@ -1371,6 +1345,37 @@ AAG.campaign = {
     contact: '연락 가능한 휴대폰 번호를 적어 주세요. (예: 010-1234-5678)',
     consent: '경품 추첨에 참여하려면 개인정보 수집·이용에 동의해 주세요.',
     send: '인터넷 연결이 불안정해서 보내지 못했어요. 잠시 뒤 다시 눌러 주세요.'
+  },
+
+  /* ============================================================
+   * ⚠️ 레거시 설정 — 지금 게임에서는 쓰지 않아요 (고쳐도 화면에 변화 없음)
+   *    v0.3 의 '장소 있음/없음 분기'와 '랜덤 오늘의 미션' 문구예요. 나중에 다시 쓸 수 있게 보관만 해 둡니다.
+   * ============================================================ */
+  legacy: true,
+  /* 예전 분기 질문 (우리 동네에도 있을까요?) */
+  fork: {
+    title: '게임에서 찾은 접근성, 우리 동네에도 있을까요?',
+    lead: '이용하면서 편했던 장소가 떠오른다면 알려주세요.',
+    yes: '떠오르는 장소가 있어요',
+    no: '아직 없어요. 앞으로 찾아볼래요'
+  },
+
+  /* 예전 오늘의 접근성 미션 (무작위 1개) */
+  mission: {
+    title: '오늘의 접근성 미션',
+    body: '다음에 동네를 걸을 때\n평소에는 지나쳤던 입구, 안내판, 메뉴와 공간을 한번 살펴보세요.',
+    question: '사람마다 이곳을 어떻게 이용할 수 있을까?',
+    reroll: '다른 미션 보기',
+    save: '미션 카드 저장하기',
+    saveHint: '이미지를 길게 누르거나(휴대폰) 오른쪽 클릭해서 저장할 수 있어요.',
+    next: '미션 받고 다음으로',
+    list: [
+      { key: 'mission_step_free', text: '계단 없이 들어갈 수 있는 가게 하나 찾아보기', icon: 'ramp' },
+      { key: 'mission_sound_text', text: '소리와 글자로 함께 안내하는 곳 찾아보기', icon: 'text' },
+      { key: 'mission_multi_info', text: '메뉴나 정보를 여러 방법으로 확인할 수 있는 곳 찾아보기', icon: 'multi' },
+      { key: 'mission_tactile', text: '우리 동네 점자블록을 찾아보고, 그 위가 비어 있는지 살펴보기', icon: 'tactile' },
+      { key: 'mission_clear_sign', text: '안내가 이해하기 쉬운 장소 찾아보기', icon: 'bigtext' }
+    ]
   }
 };
 
@@ -3664,7 +3669,8 @@ AAG.campaign = {
     if (back) back.addEventListener('click', () => { A.audio.play('tap'); STEPS[back.dataset.back](); });
   }
   function head(step, title, lead, backTo) {
-    const labels = C().steps || [];
+    const all = C().steps || [];
+    const labels = hasFinish() ? all : all.slice(0, all.length - 1);   // 마무리(한마디·경품)가 없으면 3단계
     const pips = labels.map((l, i) => '<li class="' + (i < step ? 'is-done' : i === step ? 'is-now' : '') + '"' + (i === step ? ' aria-current="step"' : '') + '><span class="pip" aria-hidden="true"></span><span class="pip-label">' + esc(l) + '</span></li>').join('');
     return '<div class="cp-top">' +
         (backTo ? '<button type="button" class="cp-back" data-back="' + backTo + '"><span aria-hidden="true">←</span> ' + esc(C().back || '이전') + '</button>' : '<span></span>') +
