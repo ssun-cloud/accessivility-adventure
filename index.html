@@ -626,6 +626,28 @@ fieldset.field, fieldset.prize { border: 0; padding: 0; margin: 0; }
   .cp-done .end-items { margin: 4px 0; }
 }
 
+/* ---------- v0.4 작은 실천 · 마무리 ---------- */
+.act-grid .pick { min-height: 64px; }
+.act-grid .pick-label { font-size: clamp(17px, 2.4vw, 20px); word-break: keep-all; }
+#cpFinish { display: flex; flex-direction: column; gap: 14px; }
+.field textarea {
+  width: 100%; min-height: 92px; padding: 10px 14px; resize: vertical;
+  font: 700 17px/1.5 var(--f-body); color: var(--ink);
+  background: var(--card); border: 3px solid var(--ink); border-radius: 12px;
+}
+.field textarea::placeholder { color: #9a91ad; font-weight: 400; }
+#cpFinish .prize .check { font-family: var(--f-display); font-weight: 400; font-size: 20px; padding-top: 4px; }
+.prize-fields[hidden] { display: none !important; }
+.cp-link-row { margin: 10px 0 0; text-align: center; }
+.cp-link {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 6px 12px;
+  background: none; border: 0; cursor: pointer; color: var(--ink);
+  font: 700 16px var(--f-body); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px;
+}
+.cp-link:hover { background: var(--paper-2); border-radius: 10px; }
+.cp-link-icon { width: 22px; height: 22px; image-rendering: pixelated; }
+.mission-body { word-break: keep-all; }
+
 </style>
 </head>
 <body>
@@ -981,14 +1003,19 @@ AAG.registerTheme({
   ],
 
   campaignFlow: {
+    // 이 버전에서 켜고 끌 선택 모듈 (장소 추천 · 한마디 · 경품)
+    modules: { placeRecommendation: false, feedback: true, prize: true },
+    // actions: [...]  ← 이 버전만의 작은 실천 목록을 쓰려면 여기에 (없으면 기본 8개)
     missionBody: '다음에 영화관에 갈 때\n평소에는 지나쳤던 입구, 안내판, 좌석과 공간을 한번 살펴보세요.',
     doneSub: '다음에 영화관에 갈 때\n평소에는 지나쳤던 입구, 안내판, 좌석과 공간을 한번 살펴보세요.',
+    doneKey: '게임에서 찾은 접근성,\n이제 영화관과 내 주변에서 하나씩 실천해 보세요.',
     memory: [
       { key: 'movement', label: '이동하기 편한 길', icon: 'ramp' },
       { key: 'captions', label: '글자로 함께 보는 대사(자막)', icon: 'cc' },
       { key: 'audio_desc', label: '말로 설명해 주는 장면(화면해설)', icon: 'headphones' },
       { key: 'all', label: '모두 기억에 남아요', icon: 'star' }
     ],
+    // missions : 예전 '오늘의 미션' 흐름용 (지금 기본 흐름에서는 쓰지 않음)
     missions: [
       { key: 'mission_step_free', text: '계단 없이 들어갈 수 있는 영화관·문화공간 찾아보기', icon: 'ramp' },
       { key: 'mission_captions', text: '한글 자막으로 볼 수 있는 영화나 영상 찾아보기', icon: 'cc' },
@@ -1117,6 +1144,9 @@ AAG.registerTheme({
   ],
 
   campaignFlow: {
+    // 이 버전에서 켜고 끌 선택 모듈 (장소 추천 · 한마디 · 경품)
+    modules: { placeRecommendation: false, feedback: false, prize: false },
+    // actions: [...]  ← 이 버전만의 작은 실천 목록을 쓰려면 여기에 (없으면 기본 8개)
     missionBody: '내일 학교에 가면\n평소에는 지나쳤던 입구, 안내판, 교실과 복도를 한번 살펴보세요.',
     doneSub: '내일 학교에 가면\n평소에는 지나쳤던 입구, 안내판, 교실과 복도를 한번 살펴보세요.',
     memory: [
@@ -1125,6 +1155,7 @@ AAG.registerTheme({
       { key: 'communication', label: '여러 방법으로 이야기하기', icon: 'cards' },
       { key: 'all', label: '모두 기억에 남아요', icon: 'star' }
     ],
+    // missions : 예전 '오늘의 미션' 흐름용 (지금 기본 흐름에서는 쓰지 않음)
     missions: [
       { key: 'mission_step_free', text: '우리 학교에서 계단 없이 다닐 수 있는 길 찾아보기', icon: 'ramp' },
       { key: 'mission_text_material', text: '말과 글자로 함께 설명하는 수업 자료 찾아보기', icon: 'cc' },
@@ -1132,7 +1163,7 @@ AAG.registerTheme({
       { key: 'mission_tactile', text: '학교 가는 길의 점자블록을 찾아보고, 그 위가 비어 있는지 살펴보기', icon: 'tactile' },
       { key: 'mission_clear_sign', text: '알아보기 쉬운 교내 안내판 찾아보기', icon: 'bigtext' }
     ],
-    doneKey: '게임에서 찾은 접근성,\n이제 우리 학교와 동네에서도 찾아보세요.'
+    doneKey: '게임에서 찾은 접근성,\n이제 우리 학교와 동네에서 하나씩 실천해 보세요.'
   },
 
   ending: {
@@ -1152,15 +1183,19 @@ AAG.registerTheme({
 /* =========================================================
  * data/campaign.js — 게임 뒤 '보너스 미션'(온라인 캠페인 참여) 설정
  * ---------------------------------------------------------
- * 흐름 : ① 가장 기억에 남은 것 → ② 이런 것도 접근성이에요 → ③ 우리 동네에도 있을까요?
- *        (있어요 → 장소 추천 / 아직 없어요 → 오늘의 접근성 미션) → ④ 경품 추첨(선택) → 완료
+ * 흐름 : ① 기억 → ② 발견(이런 것도 접근성이에요) → ③ 작은 실천 고르기 → 나의 실천 카드
+ *        → ④ 마무리(한마디 · 경품, 켜진 것만) → 완료
+ *        · 장소 추천은 실천 카드 화면의 보조 버튼('편했던 장소도 알려줄게요')으로만 들어가요.
+ *
+ * 🔧 캠페인마다 켜고 끄기 : 아래 modules 의 true / false 만 바꾸면 됩니다.
+ *    버전별로 다르게 하려면 테마 파일의 campaignFlow.modules 에 적어 주세요(그 값이 우선).
  *
  * ✏️ 문구와 저장 주소는 이 파일에서만 바꾸면 됩니다.
  *  - endpoint : Google Apps Script 웹 앱 주소(…/exec). 비워 두면 '미리보기 모드'(저장 안 함).
  *  - trackPlays : 게임만 한 사람도 셀 수 있게 시작·완료 횟수를 보냅니다(개인정보 없음).
  *  - features 의 key 는 google-apps-script/Code.gs 의 FEATURES 와 똑같이 맞춰 주세요.
- *  - memory(기억에 남은 것)·missions(오늘의 미션)은 버전마다 다르게 쓸 수 있어요.
- *    각 테마 파일에 campaignFlow: { memory: [...], missions: [...] } 를 넣으면 그 값이 우선합니다.
+ *  - memory(기억에 남은 것)·actions(작은 실천)·modules 는 버전마다 다르게 쓸 수 있어요.
+ *    각 테마 파일에 campaignFlow: { memory: [...], actions: [...], modules: {...} } 를 넣으면 그 값이 우선합니다.
  *    없으면 아래 기본값(마을축제용)을 씁니다.
  *  - 화면 문구(label)와 시트 저장값(key)은 분리되어 있어요. key 는 바꾸지 않는 것을 권해요.
  * ========================================================= */
@@ -1170,7 +1205,14 @@ AAG.campaign = {
 
   trackPlays: true,   // 게임 시작·완료 횟수를 '게임기록' 시트에 남기기(개인정보 없음). 끄려면 false
 
-  steps: ['기억', '발견', '우리 동네', '마무리'],   // 위쪽 진행 표시
+  steps: ['기억', '발견', '실천', '마무리'],   // 위쪽 진행 표시
+
+  /* 선택 모듈 — 기본값(마을축제). 둘 다 꺼지면(feedback·prize) 마무리 화면 없이 바로 완료 */
+  modules: {
+    placeRecommendation: true,   // 실천 카드 아래 '편했던 장소도 알려줄게요' 버튼
+    feedback: false,             // 마무리 화면의 짧은 한마디
+    prize: true                  // 마무리 화면의 경품 추첨 (이름·연락처·동의)
+  },
 
   /* ① 가장 기억에 남은 것 (한 개 고르기) */
   memory: {
@@ -1204,7 +1246,43 @@ AAG.campaign = {
   ],
   otherPlaceholder: '편했던 점을 짧게 적어 주세요',
 
-  /* ③ 우리 동네에도 있을까요? */
+  /* ③ 작은 실천 고르기 → 나의 작은 접근성 실천 카드 */
+  action: {
+    title: '오늘 내가 해볼 수 있는 작은 실천 하나를 골라보세요',
+    lead: '작은 행동도 누군가에게는 더 편한 환경을 만드는 시작이 될 수 있어요.',
+    choose: '이 실천을 해볼래요',
+    pickFirst: '해볼 실천을 하나 골라 주세요.',
+    cardTitle: '나의 작은 접근성 실천',
+    cardKicker: 'MY ACCESSIBILITY ACTION',
+    cardFoot: '작은 실천이 모이면 우리 동네가 조금씩 달라져요.',
+    save: '내 실천 카드 저장하기',
+    saveHint: '이미지를 길게 누르거나(휴대폰) 오른쪽 클릭해서 저장할 수 있어요.',
+    next: '다음',
+    finish: '완료하기',
+    placeLink: '편했던 장소도 알려줄게요',
+    list: [
+      { key: 'action_clear_tactile', label: '점자블록을 피해 주차하기', desc: '공유자전거나 킥보드는 점자블록과 통행로를 막지 않는 곳에 세워요.', icon: 'tactile' },
+      { key: 'action_clear_entrance', label: '출입구 앞을 막지 않기', desc: '출입구나 엘리베이터 앞에 물건을 두지 않아요.', icon: 'door' },
+      { key: 'action_check_path', label: '통행로를 한번 살펴보기', desc: '가게 앞 입간판이나 물건이 사람들의 이동을 막고 있지 않은지 살펴봐요.', icon: 'wide' },
+      { key: 'action_check_text', label: '안내문 글씨 크기 살펴보기', desc: '안내문이나 홍보물을 만들 때 글씨가 너무 작지 않은지 한번 확인해요.', icon: 'bigtext' },
+      { key: 'action_add_captions', label: '영상에 자막 넣기', desc: '영상이나 콘텐츠를 만들 때 자막을 넣을 수 있는지 확인해요.', icon: 'cc' },
+      { key: 'action_multi_info', label: '여러 방법으로 안내해 보기', desc: '메뉴나 안내를 글자, 큰글씨, 점자, 음성 등 여러 방법으로 전할 수 있는지 생각해 봐요.', icon: 'multi' },
+      { key: 'action_wait', label: '대답할 시간을 기다리기', desc: '상대방이 생각하고 표현할 시간을 충분히 기다려요.', icon: 'wait' },
+      { key: 'action_ask_first', label: '도움이 필요한지 먼저 물어보기', desc: '도움이 필요할 거라고 먼저 정하지 않고, 필요한지 먼저 물어봐요.', icon: 'ask' }
+    ]
+  },
+
+  /* ④ 마무리 — 한마디 (modules.feedback 이 true 일 때만) */
+  feedback: {
+    title: '게임을 하면서 떠오른 생각이 있나요?',
+    lead: '새롭게 알게 된 점이나 우리 복지관에 전하고 싶은 말이 있다면 자유롭게 남겨주세요.',
+    label: '한마디',
+    placeholder: '떠오른 생각을 편하게 적어주세요.',
+    optional: '안 적어도 괜찮아요',
+    doneNote: '남겨주신 이야기도 잘 받았어요.'
+  },
+
+  /* (예전 흐름용 — 지금 기본 흐름에서는 쓰지 않아요) 우리 동네에도 있을까요? */
   fork: {
     title: '게임에서 찾은 접근성, 우리 동네에도 있을까요?',
     lead: '이용하면서 편했던 장소가 떠오른다면 알려주세요.',
@@ -1217,7 +1295,8 @@ AAG.campaign = {
     title: '우리 동네 장소 기록하기',
     featuresLabel: '이 장소에서는 어떤 점이 편했나요?',
     prefillNote: '앞에서 고른 카드가 미리 체크되어 있어요. 이 장소에 맞게 바꿔 주세요.',
-    next: '기록하고 다음으로'
+    next: '기록하고 다음으로',
+    nextFinish: '기록하고 완료하기'
   },
   place: { label: '장소명', placeholder: '예: 골목카페, 동네 도서관, OO마트' },
   area: {
@@ -1228,7 +1307,7 @@ AAG.campaign = {
   reassure: '완벽한 곳이 아니어도 괜찮아요.\n이용하면서 편했던 점 하나만 알려주세요.',
   reviewNote: '남겨 주신 장소는 바로 공개되지 않아요. 담당자가 확인한 뒤 캠페인 자료로 활용하며, “접근성이 완벽한 곳”이라는 인증은 아니에요.',
 
-  /* ③-2 오늘의 접근성 미션 (무작위 1개, 다른 미션 보기 가능) */
+  /* (예전 흐름용 — 지금 기본 흐름에서는 쓰지 않아요) 오늘의 접근성 미션 (무작위 1개) */
   mission: {
     title: '오늘의 접근성 미션',
     body: '다음에 동네를 걸을 때\n평소에는 지나쳤던 입구, 안내판, 메뉴와 공간을 한번 살펴보세요.',
@@ -1246,12 +1325,11 @@ AAG.campaign = {
     ]
   },
 
-  /* ④ 경품 추첨 (누구나 선택) */
+  /* ④ 마무리 — 경품 추첨 (modules.prize 가 true 일 때만) */
   prize: {
-    enabled: true,
     title: '온라인 캠페인에 참여해주셔서 감사합니다!',
     lead: '참여자 중 추첨을 통해 작은 선물을 드립니다.',
-    optIn: '경품 추첨에 참여할게요',
+    optIn: '경품 추첨에도 참여할게요',
     optOut: '괜찮아요, 캠페인만 참여할게요',
     submit: '참여 완료하기',
     nameLabel: '이름 또는 닉네임',
@@ -1270,11 +1348,12 @@ AAG.campaign = {
     minorNote: '만 14세 미만 어린이는 보호자와 함께 보호자 연락처로 입력해 주세요.'
   },
 
-  /* 완료  (버전별로 campaignFlow.missionBody / doneSub / doneKey 로 바꿀 수 있어요) */
+  /* 완료  (버전별로 campaignFlow.doneSub / doneKey 로 바꿀 수 있어요) */
   done: {
     title: '오늘의 접근성 모험 완료!',
-    key: '게임에서 찾은 접근성,\n이제 우리 동네에서도 찾아보세요.',
+    key: '게임에서 찾은 접근성,\n이제 내 주변에서 하나씩 실천해 보세요.',
     sub: '다음에 동네를 걸을 때\n평소에는 지나쳤던 입구, 안내판, 메뉴와 공간을 한번 살펴보세요.',
+    actionNote: '내가 골라본 작은 실천',
     placeNote: '알려주신 장소도 잘 기록했어요.',
     missionNote: '오늘의 미션',
     replay: '처음부터 다시 하기',
@@ -1408,6 +1487,8 @@ AAG.campaign = {
     toilet: ['.kkkk.....', '.kwwk.....', '.kwwk.....', '.kwwkkkkk.', '.kwwwwwwwk', '.kkwwwwwk.', '..kwwwwk..', '...kwwk...', '...kwwk...', '..kkkkkk..'],
     wide: ['kk......kk', 'kk......kk', 'kk.r..r.kk', 'kkrrrrrrkk', 'kk.r..r.kk', 'kk......kk', 'kk......kk', 'kk......kk', 'kk......kk', 'kk......kk'],
     pin: ['...kkkk...', '..krrrrk..', '.krrrrrrk.', '.krrwwrrk.', '.krrwwrrk.', '.krrrrrrk.', '..krrrrk..', '...krrk...', '....kk....', '..........'],
+    wait: ['kkkkkkkkkk', '.kyyyyyyk.', '..kyyyyk..', '...kyyk...', '....kk....', '...kwwk...', '..kwyywk..', '.kyyyyyyk.', 'kkkkkkkkkk', '..........'],
+    ask: ['.kkkkkkkk.', 'kwwwkkwwwk', 'kwwkwwkwwk', 'kwwwwwkwwk', 'kwwwwkwwwk', 'kwwwwwwwwk', 'kwwwwkwwwk', '.kkkkkkkk.', '..kk......', '.k........'],
     star: ['....kk....', '....yk....', '...kyyk...', 'kkkkyyykkk', 'kyyyyyyyyk', '.kyyyyyyk.', '..kyyyyk..', '.kyykkyyk.', '.kyk..kyk.', '.kk....kk.']
   };
   const iconCache = {};
@@ -3419,12 +3500,12 @@ AAG.campaign = {
 
     /* 보너스 미션 결과 → 시트에 저장할 데이터
      * 화면 문구(label)와 저장값(key)을 함께 보냅니다. 집계는 key 로 하세요. */
-    buildPayload(theme, s, memoryOptions, missions) {
+    buildPayload(theme, s, memoryOptions, actions) {
       const C = A.campaign, now = new Date();
       const flags = list => { const o = {}; C.features.forEach(f => { o[f.key] = list.includes(f.key) ? 1 : 0; }); return o; };
       const labels = list => C.features.filter(f => list.includes(f.key)).map(f => (f.other ? '기타' : f.label));
       const mem = (memoryOptions || []).find(o => o.key === s.memory);
-      const mis = !s.hasPlace && s.mission ? ((missions || []).find(m => m.key === s.mission.key) || s.mission) : null;
+      const act = s.action ? ((actions || []).find(a => a.key === s.action) || null) : null;
       const place = !!s.hasPlace;
       return {
         v: 2,
@@ -3445,9 +3526,11 @@ AAG.campaign = {
         placeFeatures: flags(place ? s.placeFeatures : []),
         placeFeatureLabels: place ? labels(s.placeFeatures) : [],
         placeOther: place ? (s.placeOther || '') : '',
-        mission: mis ? mis.key : '',
-        missionText: mis ? mis.text : '',
-        missionSaved: !!s.missionSaved,
+        mission: '', missionText: '', missionSaved: false,        // 예전 '오늘의 미션' 칸(지금은 비워 둠)
+        action: act ? act.key : '',
+        actionLabel: act ? act.label : '',
+        actionCardSaved: !!s.actionSaved,
+        feedback: (s.feedback || '').slice(0, 200),
         prize: !!s.prize,
         name: s.prize ? s.name : '',
         contact: s.prize ? s.contact : '',
@@ -3505,9 +3588,9 @@ AAG.campaign = {
   <script>
 /* =========================================================
  * campaign/form.js — 게임 뒤 '보너스 미션' (온라인 캠페인 참여)
- * ① 가장 기억에 남은 것 → ② 이런 것도 접근성이에요 → ③ 우리 동네에도 있을까요?
- *    ├ 있어요 → 장소 기록   └ 아직 없어요 → 오늘의 접근성 미션
- * → ④ 경품 추첨(선택) → 완료
+ * ① 기억 → ② 발견 → ③ 작은 실천 고르기 → 나의 실천 카드
+ *    (└ 보조 버튼: 편했던 장소도 알려줄게요 → 장소 기록)
+ * → ④ 마무리(한마디 · 경품 — 켜진 것만, 둘 다 꺼지면 생략) → 완료
  * 문구·선택지는 js/data/campaign.js (버전별 기억·미션은 각 테마의 campaignFlow)에서 바꿉니다.
  * ========================================================= */
 (function (A) {
@@ -3521,13 +3604,18 @@ AAG.campaign = {
   const C = () => A.campaign;
   const flow = () => (ctx.theme && ctx.theme.campaignFlow) || {};
   const memoryOptions = () => flow().memory || C().memory.options;
-  const missionList = () => flow().missions || C().mission.list;
+  const missionList = () => flow().missions || C().mission.list;          // 예전 흐름용(기본 흐름에서는 안 씀)
+  const actionList = () => flow().actions || C().action.list;
+  const mods = () => Object.assign({ placeRecommendation: true, feedback: false, prize: true }, C().modules || {}, flow().modules || {});
+  const hasFinish = () => { const m = mods(); return !!(m.feedback || (m.prize && C().prize)); };
+  const curAction = () => actionList().find(a => a.key === ctx.s.action) || null;
 
   F.open = function (theme, found, opts) {
     ctx = {
       theme, found, opts: opts || {},
       s: { memory: null, everyday: [], everydayOther: '', hasPlace: null, place: '', area: '', placeFeatures: [], placeOther: '',
-        mission: null, missionSaved: false, missionRerolls: 0, prize: null, name: '', contact: '', consent: false }
+        action: null, actionSaved: false, feedback: '',
+        mission: null, missionSaved: false, missionRerolls: 0, prize: false, name: '', contact: '', consent: false }
     };
     root = document.getElementById('campaign');
     root.hidden = false;
@@ -3625,23 +3713,65 @@ AAG.campaign = {
       s.everyday = checkedValues('everyday');
       s.everydayOther = s.everyday.includes('other') ? root.querySelector('#cpEverydayOther').value.trim() : '';
       A.audio.play('tap');
-      renderFork();
+      renderActions();
     });
   }
 
-  /* ---------- ③ 우리 동네에도 있을까요? ---------- */
-  function renderFork() {
-    const K = C().fork;
+  /* ---------- ③ 작은 실천 고르기 ---------- */
+  function renderActions() {
+    const Ac = C().action, s = ctx.s;
     sheet(
-      head(2, K.title, K.lead, 'widen') +
-      '<div class="fork-grid">' +
-        '<button type="button" class="fork" id="cpYes"><span class="fork-icon">' + icon('pin') + '</span><span class="fork-label">' + esc(K.yes) + '</span></button>' +
-        '<button type="button" class="fork" id="cpNo"><span class="fork-icon">' + icon('flag') + '</span><span class="fork-label">' + esc(K.no) + '</span></button>' +
-      '</div>',
-      K.title
+      head(2, Ac.title, Ac.lead, 'widen') +
+      '<div class="pick-grid act-grid" role="group" aria-labelledby="cpTitle">' +
+        actionList().map(a => '<button type="button" class="pick" data-key="' + esc(a.key) + '" aria-pressed="' + (s.action === a.key) + '">' +
+          '<span class="pick-icon">' + icon(a.icon || 'star') + '</span><span class="pick-label">' + esc(a.label) + '</span><span class="pick-check" aria-hidden="true"></span></button>').join('') +
+      '</div>' +
+      '<p class="form-err" id="cpFormErr" role="alert"></p>' +
+      '<div class="cp-actions one"><button type="button" class="btn btn-go" id="cpChoose"><span>' + esc(Ac.choose) + '</span><span class="btn-arrow" aria-hidden="true">▶</span></button></div>',
+      Ac.title
     );
-    root.querySelector('#cpYes').addEventListener('click', () => { ctx.s.hasPlace = true; A.audio.play('pop'); renderPlace(); });
-    root.querySelector('#cpNo').addEventListener('click', () => { ctx.s.hasPlace = false; A.audio.play('pop'); renderMission(); });
+    const fe = root.querySelector('#cpFormErr');
+    root.querySelectorAll('.pick').forEach(b => b.addEventListener('click', () => {
+      if (s.action !== b.dataset.key) s.actionSaved = false;
+      s.action = b.dataset.key; fe.textContent = '';
+      root.querySelectorAll('.pick').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      A.audio.play('pop');
+    }));
+    root.querySelector('#cpChoose').addEventListener('click', () => {
+      if (!curAction()) { fe.textContent = Ac.pickFirst; A.audio.play('hmm'); const f = root.querySelector('.pick'); if (f) f.focus(); return; }
+      A.audio.play('item');
+      renderCard(true);
+    });
+  }
+
+  /* ---------- ③ 나의 작은 접근성 실천 카드 ---------- */
+  function renderCard(fresh) {
+    const Ac = C().action, s = ctx.s, a = curAction();
+    const place = mods().placeRecommendation;
+    sheet(
+      head(2, Ac.cardTitle, '', 'actions') +
+      '<div class="mission-card' + (fresh ? ' is-new' : '') + '" id="cpMissionCard">' +
+        '<p class="mission-kicker">' + esc(Ac.cardKicker) + '</p>' +
+        '<div class="mission-badge">' + icon(a.icon || 'star') + '</div>' +
+        '<p class="mission-text">' + esc(a.label) + '</p>' +
+        '<p class="mission-body">' + esc(a.desc || '') + '</p>' +
+        '<p class="mission-q">' + esc(Ac.cardFoot) + '</p>' +
+      '</div>' +
+      '<div class="cp-actions one"><button type="button" class="btn btn-soft" id="cpSave">' + esc(Ac.save) + '</button></div>' +
+      '<div class="mission-save" id="cpSaveBox" hidden></div>' +
+      '<p class="form-err" id="cpFormErr" role="alert"></p>' +
+      '<div class="cp-actions one"><button type="button" class="btn btn-go" id="cpNext"><span>' + esc(hasFinish() ? Ac.next : Ac.finish) + '</span><span class="btn-arrow" aria-hidden="true">▶</span></button></div>' +
+      (place ? '<p class="cp-link-row"><button type="button" class="cp-link" id="cpPlaceLink">' + icon('pin', 'cp-link-icon') + '<span>' + esc(Ac.placeLink) + '</span></button></p>' : '') +
+      (hasFinish() ? '' : previewNote()),
+      Ac.cardTitle + '. ' + a.label + '. ' + (a.desc || '')
+    );
+    root.querySelector('#cpSave').addEventListener('click', () => saveMissionCard(a));
+    root.querySelector('#cpNext').addEventListener('click', e => {
+      s.hasPlace = false; A.audio.play('tap');
+      if (hasFinish()) renderFinish(); else submit(e.currentTarget);
+    });
+    const pl = root.querySelector('#cpPlaceLink');
+    if (pl) pl.addEventListener('click', () => { A.audio.play('pop'); renderPlace(); });
   }
 
   /* ---------- ③-1 장소 기록 ---------- */
@@ -3649,7 +3779,7 @@ AAG.campaign = {
     const Cc = C(), P = Cc.placeStep, s = ctx.s;
     const pre = s.placeFeatures.length ? s.placeFeatures : s.everyday;
     sheet(
-      head(2, P.title, '', 'fork') +
+      head(2, P.title, '', 'card') +
       '<form id="cpForm" novalidate>' +
         '<div class="field">' +
           '<label for="cpPlace">' + esc(Cc.place.label) + ' <span class="req">필수</span></label>' +
@@ -3673,7 +3803,7 @@ AAG.campaign = {
         '</fieldset>' +
         '<p class="review-note">' + esc(Cc.reviewNote) + '</p>' +
         '<p class="form-err" id="cpFormErr" role="alert"></p>' +
-        '<div class="cp-actions one"><button type="submit" class="btn btn-go"><span>' + esc(P.next) + '</span><span class="btn-arrow" aria-hidden="true">▶</span></button></div>' +
+        '<div class="cp-actions one"><button type="submit" class="btn btn-go" id="cpPlaceNext"><span>' + esc(hasFinish() ? P.next : (P.nextFinish || P.next)) + '</span><span class="btn-arrow" aria-hidden="true">▶</span></button></div>' +
       '</form>',
       P.title
     );
@@ -3693,49 +3823,15 @@ AAG.campaign = {
       need(bad, s.placeFeatures.length > 0, 'cpFeatErr', E.features, '#placeFeat0');
       if (s.placeFeatures.includes('other')) need(bad, s.placeOther.length > 0, 'cpPlaceOtherErr', E.other, '#cpPlaceOther');
       if (bad.length) { invalid(bad, fe); return; }
+      s.hasPlace = true;
       A.audio.play('pop');
-      renderPrize();
+      if (hasFinish()) renderFinish(); else submit(root.querySelector('#cpPlaceNext'));
     });
   }
 
-  /* ---------- ③-2 오늘의 접근성 미션 ---------- */
-  function pickMission(exceptKey) {
-    const list = missionList().filter(m => m.key !== exceptKey);
-    return list[Math.floor(Math.random() * list.length)];
-  }
-  function renderMission() {
-    const M = C().mission, s = ctx.s;
-    if (!s.mission) s.mission = pickMission();
-    const m = missionList().find(x => x.key === s.mission.key) || s.mission;
-    sheet(
-      head(2, M.title, '', 'fork') +
-      '<div class="mission-card" id="cpMissionCard">' +
-        '<p class="mission-kicker">BONUS MISSION</p>' +
-        '<div class="mission-badge">' + icon(m.icon || 'star') + '</div>' +
-        '<p class="mission-text" aria-live="polite">' + esc(m.text) + '</p>' +
-        '<p class="mission-body">' + br(flow().missionBody || M.body) + '</p>' +
-        '<p class="mission-q">' + esc(M.question) + '</p>' +
-      '</div>' +
-      '<div class="cp-actions">' +
-        '<button type="button" class="btn btn-soft" id="cpReroll"><span aria-hidden="true">↻</span> ' + esc(M.reroll) + '</button>' +
-        '<button type="button" class="btn btn-soft" id="cpSave">' + esc(M.save) + '</button>' +
-      '</div>' +
-      '<div class="mission-save" id="cpSaveBox" hidden></div>' +
-      '<div class="cp-actions one"><button type="button" class="btn btn-go" id="cpNext"><span>' + esc(M.next) + '</span><span class="btn-arrow" aria-hidden="true">▶</span></button></div>',
-      M.title + '. ' + m.text
-    );
-    root.querySelector('#cpReroll').addEventListener('click', () => {
-      s.mission = pickMission(s.mission.key); s.missionRerolls++; s.missionSaved = false;
-      A.audio.play('pop'); renderMission();
-      const c = root.querySelector('#cpMissionCard'); c.classList.add('is-new');
-    });
-    root.querySelector('#cpSave').addEventListener('click', () => saveMissionCard(m));
-    root.querySelector('#cpNext').addEventListener('click', () => { A.audio.play('tap'); renderPrize(); });
-  }
-
-  /* 미션 카드 이미지 만들기 (휴대폰 사진첩에 저장해 가져갈 수 있게) */
-  function saveMissionCard(m) {
-    const M = C().mission, W = 1080, H = 1350, cv = document.createElement('canvas');
+  /* 실천 카드 이미지 만들기 (휴대폰 사진첩에 저장해 가져갈 수 있게) */
+  function saveMissionCard(a) {
+    const Ac = C().action, W = 1080, H = 1350, cv = document.createElement('canvas');
     cv.width = W; cv.height = H;
     const c = cv.getContext('2d'); c.imageSmoothingEnabled = false;
     const ink = '#2f2945';
@@ -3750,24 +3846,24 @@ AAG.campaign = {
     c.fillStyle = ink; c.fillRect(x, y + 120, w, 8);
     const disp = "'Do Hyeon', 'Noto Sans KR', sans-serif", body = "'Noto Sans KR', sans-serif";
     c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = ink;
-    c.font = "700 44px 'Silkscreen', monospace"; c.fillText('BONUS MISSION', W / 2, y + 62);
-    c.font = '66px ' + disp; c.fillText(M.title, W / 2, y + 205);
+    c.font = "700 36px 'Silkscreen', monospace"; c.fillText(Ac.cardKicker, W / 2, y + 62);
+    c.font = '66px ' + disp; c.fillText(Ac.cardTitle, W / 2, y + 205);
     // 아이콘
     const iy = y + 360;
     c.fillStyle = ink; c.beginPath(); c.arc(W / 2, iy, 100, 0, Math.PI * 2); c.fill();
     c.fillStyle = '#ffd76c'; c.beginPath(); c.arc(W / 2, iy, 88, 0, Math.PI * 2); c.fill();
-    c.drawImage(A.iconSprite(m.icon || 'star'), W / 2 - 65, iy - 65, 130, 130);
-    // 미션 문장 · 안내 (아래 띠 위쪽 공간 안에서)
+    c.drawImage(A.iconSprite(a.icon || 'star'), W / 2 - 65, iy - 65, 130, 130);
+    // 실천 제목 · 설명 (아래 띠 위쪽 공간 안에서)
     const bottom = y + h - 190;
     let ty = iy + 170;
     c.fillStyle = ink; c.font = '60px ' + disp;
-    wrap(c, m.text, w - 120).forEach(line => { c.fillText(line, W / 2, ty); ty += 78; });
+    wrap(c, a.label, w - 120).forEach(line => { c.fillText(line, W / 2, ty); ty += 78; });
     ty += 24;
-    c.fillStyle = '#5b5074'; c.font = '500 34px ' + body;
-    U.lines(flow().missionBody || M.body).forEach(l => wrap(c, l, w - 140).forEach(line => { if (ty < bottom - 60) c.fillText(line, W / 2, ty); ty += 50; }));
-    ty += 18;
-    c.fillStyle = '#2b8f7c'; c.font = '700 36px ' + body;
-    wrap(c, M.question, w - 140).forEach(line => { if (ty < bottom) c.fillText(line, W / 2, ty); ty += 50; });
+    c.fillStyle = '#5b5074'; c.font = '500 36px ' + body;
+    wrap(c, a.desc || '', w - 160).forEach(line => { if (ty < bottom - 60) c.fillText(line, W / 2, ty); ty += 54; });
+    ty += 22;
+    c.fillStyle = '#2b8f7c'; c.font = '700 34px ' + body;
+    wrap(c, Ac.cardFoot, w - 140).forEach(line => { if (ty < bottom) c.fillText(line, W / 2, ty); ty += 50; });
     // 아래 띠 : 탐험가 + 게임 이름
     c.fillStyle = ink; c.fillRect(x, y + h - 160, w, 6);
     c.fillStyle = '#daf4ed'; c.fillRect(x, y + h - 154, w, 154);
@@ -3778,9 +3874,9 @@ AAG.campaign = {
     const url = cv.toDataURL('image/png');
     const box = root.querySelector('#cpSaveBox');
     box.hidden = false;
-    box.innerHTML = '<img src="' + url + '" alt="오늘의 접근성 미션 카드: ' + esc(m.text) + '"><p class="field-help">' + esc(M.saveHint) + '</p>';
-    try { const a = document.createElement('a'); a.href = url; a.download = '접근성미션_' + m.key + '.png'; document.body.appendChild(a); a.click(); a.remove(); } catch (e) { /* 이미지로 저장 안내 */ }
-    ctx.s.missionSaved = true;
+    box.innerHTML = '<img src="' + url + '" alt="' + esc(Ac.cardTitle) + ' 카드: ' + esc(a.label) + '"><p class="field-help">' + esc(Ac.saveHint) + '</p>';
+    try { const l = document.createElement('a'); l.href = url; l.download = '나의접근성실천_' + a.key + '.png'; document.body.appendChild(l); l.click(); l.remove(); } catch (e) { /* 이미지로 저장 안내 */ }
+    ctx.s.actionSaved = true;
     A.audio.play('item');
     box.scrollIntoView({ block: 'nearest', behavior: U.reducedMotion() ? 'auto' : 'smooth' });
   }
@@ -3794,57 +3890,67 @@ AAG.campaign = {
     return lines;
   }
 
-  /* ---------- ④ 경품 추첨 (누구나 선택) ---------- */
-  function renderPrize() {
-    const Pz = C().prize, s = ctx.s, backTo = s.hasPlace ? 'place' : 'mission';
-    if (!Pz.enabled) { submit(); return; }
-    const consentRows = (Pz.consentDetail || []).map(r => '<tr><th scope="row">' + esc(r[0]) + '</th><td>' + esc(r[1]) + '</td></tr>').join('');
+  /* ---------- ④ 마무리 : 한마디 + 경품 (켜진 것만) ---------- */
+  function renderFinish() {
+    const m = mods(), Pz = C().prize, Fb = C().feedback, s = ctx.s;
+    const fb = !!m.feedback, pz = !!(m.prize && Pz);
+    const title = fb ? Fb.title : Pz.title, lead = fb ? Fb.lead : Pz.lead;
+    const consentRows = pz ? (Pz.consentDetail || []).map(r => '<tr><th scope="row">' + esc(r[0]) + '</th><td>' + esc(r[1]) + '</td></tr>').join('') : '';
     sheet(
-      head(3, Pz.title, Pz.lead, backTo) +
-      '<div class="fork-grid">' +
-        '<button type="button" class="fork" id="cpJoin" aria-pressed="' + (s.prize === true) + '" aria-controls="cpPrizeForm"><span class="fork-icon">' + icon('star') + '</span><span class="fork-label">' + esc(Pz.optIn) + '</span></button>' +
-        '<button type="button" class="fork" id="cpPass"><span class="fork-icon">' + icon('cup') + '</span><span class="fork-label">' + esc(Pz.optOut) + '</span></button>' +
-      '</div>' +
-      '<form id="cpPrizeForm" class="prize prize-fields"' + (s.prize === true ? '' : ' hidden') + ' novalidate>' +
-        '<div class="field"><label for="cpName">' + esc(Pz.nameLabel) + ' <span class="req">필수</span></label>' +
-          '<input id="cpName" type="text" maxlength="30" autocomplete="nickname" value="' + esc(s.name) + '" aria-describedby="cpNameErr"><p class="err" id="cpNameErr"></p></div>' +
-        '<div class="field"><label for="cpContact">' + esc(Pz.contactLabel) + ' <span class="req">필수</span></label>' +
-          '<input id="cpContact" type="tel" inputmode="tel" maxlength="16" autocomplete="tel" value="' + esc(s.contact) + '" placeholder="' + esc(Pz.contactPlaceholder) + '" aria-describedby="cpContactErr cpPrivacy"><p class="err" id="cpContactErr"></p></div>' +
-        '<p class="privacy" id="cpPrivacy">' + esc(Pz.privacy) + '</p>' +
-        (Pz.minorNote ? '<p class="privacy minor">' + esc(Pz.minorNote) + '</p>' : '') +
-        (Pz.requireConsent ?
-          '<details class="consent-detail"><summary>개인정보 수집·이용 안내 자세히 보기</summary><table>' + consentRows + '</table></details>' +
-          '<label class="check"><input type="checkbox" id="cpConsent"' + (s.consent ? ' checked' : '') + ' aria-describedby="cpConsentErr"><span>' + esc(Pz.consentLabel) + '</span></label>' +
-          '<p class="err" id="cpConsentErr"></p>' : '') +
+      head(3, title, lead, s.hasPlace ? 'place' : 'card') +
+      '<form id="cpFinish" novalidate>' +
+        (fb ? '<div class="field"><label for="cpFeedback">' + esc(Fb.label) + ' <span class="opt">' + esc(Fb.optional) + '</span></label>' +
+          '<textarea id="cpFeedback" rows="3" maxlength="200" placeholder="' + esc(Fb.placeholder) + '">' + esc(s.feedback) + '</textarea></div>' : '') +
+        (pz ?
+          '<fieldset class="prize">' +
+            (fb ? '<p class="prize-lead">' + esc(Pz.lead) + '</p>' : '') +
+            '<label class="check"><input type="checkbox" id="cpPrize" aria-controls="cpPrizeFields"' + (s.prize ? ' checked' : '') + '><span>' + esc(Pz.optIn) + '</span></label>' +
+            '<div class="prize-fields" id="cpPrizeFields"' + (s.prize ? '' : ' hidden') + '>' +
+              '<div class="field"><label for="cpName">' + esc(Pz.nameLabel) + ' <span class="req">필수</span></label>' +
+                '<input id="cpName" type="text" maxlength="30" autocomplete="nickname" value="' + esc(s.name) + '" aria-describedby="cpNameErr"><p class="err" id="cpNameErr"></p></div>' +
+              '<div class="field"><label for="cpContact">' + esc(Pz.contactLabel) + ' <span class="req">필수</span></label>' +
+                '<input id="cpContact" type="tel" inputmode="tel" maxlength="16" autocomplete="tel" value="' + esc(s.contact) + '" placeholder="' + esc(Pz.contactPlaceholder) + '" aria-describedby="cpContactErr cpPrivacy"><p class="err" id="cpContactErr"></p></div>' +
+              '<p class="privacy" id="cpPrivacy">' + esc(Pz.privacy) + '</p>' +
+              (Pz.minorNote ? '<p class="privacy minor">' + esc(Pz.minorNote) + '</p>' : '') +
+              (Pz.requireConsent ?
+                '<details class="consent-detail"><summary>개인정보 수집·이용 안내 자세히 보기</summary><table>' + consentRows + '</table></details>' +
+                '<label class="check"><input type="checkbox" id="cpConsent"' + (s.consent ? ' checked' : '') + ' aria-describedby="cpConsentErr"><span>' + esc(Pz.consentLabel) + '</span></label>' +
+                '<p class="err" id="cpConsentErr"></p>' : '') +
+            '</div>' +
+          '</fieldset>' : '') +
         '<div class="hp" aria-hidden="true"><label for="cpWeb">비워 두세요</label><input id="cpWeb" type="text" tabindex="-1" autocomplete="off"></div>' +
-        '<div class="cp-actions one"><button type="submit" class="btn btn-go" id="cpSubmit"><span>' + esc(Pz.submit) + '</span><span class="btn-arrow" aria-hidden="true">▶</span></button></div>' +
-      '</form>' +
-      '<p class="form-err" id="cpFormErr" role="alert"></p>' + previewNote(),
-      Pz.title + ' ' + Pz.lead
+        '<p class="form-err" id="cpFormErr" role="alert"></p>' +
+        '<div class="cp-actions one"><button type="submit" class="btn btn-go" id="cpSubmit"><span>' + esc(Pz && Pz.submit || '완료하기') + '</span><span class="btn-arrow" aria-hidden="true">▶</span></button></div>' +
+      '</form>' + previewNote(),
+      title + ' ' + lead
     );
-    const form = root.querySelector('#cpPrizeForm'), fe = root.querySelector('#cpFormErr');
-    root.querySelector('#cpJoin').addEventListener('click', e => {
-      s.prize = true; e.currentTarget.setAttribute('aria-pressed', 'true');
-      form.hidden = false; A.audio.play('pop'); root.querySelector('#cpName').focus();
-    });
-    root.querySelector('#cpPass').addEventListener('click', e => {
-      s.prize = false; s.name = ''; s.contact = ''; s.consent = false;
-      A.audio.play('tap'); submit(e.currentTarget);
+    const form = root.querySelector('#cpFinish'), fe = root.querySelector('#cpFormErr');
+    const box = root.querySelector('#cpPrize');
+    if (box) box.addEventListener('change', () => {
+      s.prize = box.checked;
+      root.querySelector('#cpPrizeFields').hidden = !box.checked;
+      A.audio.play(box.checked ? 'pop' : 'tap');
+      if (box.checked) root.querySelector('#cpName').focus();
     });
     form.querySelectorAll('input').forEach(inp => inp.addEventListener('input', () => { clearErr(inp); fe.textContent = ''; }));
     form.addEventListener('submit', e => {
       e.preventDefault();
       const E = C().errors, bad = [];
-      s.name = root.querySelector('#cpName').value.trim();
-      s.contact = root.querySelector('#cpContact').value.trim();
-      s.consent = Pz.requireConsent ? root.querySelector('#cpConsent').checked : true;
+      const ta = root.querySelector('#cpFeedback');
+      s.feedback = ta ? ta.value.trim() : '';
       s.website = root.querySelector('#cpWeb').value;
-      need(bad, s.name.length > 0, 'cpNameErr', E.name, '#cpName');
-      const digits = s.contact.replace(/[^0-9]/g, '');
-      need(bad, /^0\d{8,10}$/.test(digits), 'cpContactErr', E.contact, '#cpContact');
-      if (Pz.requireConsent) need(bad, s.consent, 'cpConsentErr', E.consent, '#cpConsent');
-      if (bad.length) { invalid(bad, fe); return; }
-      s.contact = digits.replace(/^(\d{3})(\d{3,4})(\d{4})$/, '$1-$2-$3');
+      s.prize = !!(box && box.checked);
+      if (s.prize) {
+        s.name = root.querySelector('#cpName').value.trim();
+        s.contact = root.querySelector('#cpContact').value.trim();
+        s.consent = Pz.requireConsent ? root.querySelector('#cpConsent').checked : true;
+        need(bad, s.name.length > 0, 'cpNameErr', E.name, '#cpName');
+        const digits = s.contact.replace(/[^0-9]/g, '');
+        need(bad, /^0\d{8,10}$/.test(digits), 'cpContactErr', E.contact, '#cpContact');
+        if (Pz.requireConsent) need(bad, s.consent, 'cpConsentErr', E.consent, '#cpConsent');
+        if (bad.length) { invalid(bad, fe); return; }
+        s.contact = digits.replace(/^(\d{3})(\d{3,4})(\d{4})$/, '$1-$2-$3');
+      } else { s.name = ''; s.contact = ''; s.consent = false; }
       submit(root.querySelector('#cpSubmit'));
     });
   }
@@ -3855,7 +3961,7 @@ AAG.campaign = {
     const keep = label ? label.textContent : '';
     if (btn) { btn.disabled = true; if (label) label.textContent = '보내는 중…'; }
     const key = JSON.stringify(ctx.s);
-    if (!ctx.payload || ctx.payloadKey !== key) { ctx.payload = A.sheets.buildPayload(ctx.theme, ctx.s, memoryOptions(), missionList()); ctx.payloadKey = key; }
+    if (!ctx.payload || ctx.payloadKey !== key) { ctx.payload = A.sheets.buildPayload(ctx.theme, ctx.s, memoryOptions(), actionList()); ctx.payloadKey = key; }
     const r = await A.sheets.send(ctx.payload);
     if (r.ok) { A.audio.play('item'); renderDone(r); return; }
     if (btn) { btn.disabled = false; if (label) label.textContent = keep; }
@@ -3866,16 +3972,16 @@ AAG.campaign = {
   /* ---------- 완료 ---------- */
   function renderDone(r) {
     const D = C().done, s = ctx.s;
-    const m = !s.hasPlace && s.mission ? (missionList().find(x => x.key === s.mission.key) || s.mission) : null;
+    const a = curAction();
     const items = (ctx.found || []).map(it => '<li>' + icon(it.icon) + '<span>' + esc(it.short || it.name) + '</span></li>').join('');
     sheet(
       '<div class="cp-done">' +
         '<div class="done-badge" aria-hidden="true">' + icon('flag') + '</div>' +
         '<h2 id="cpTitle" tabindex="-1">' + esc(D.title) + '</h2>' +
         '<p class="done-key">' + br(flow().doneKey || D.key) + '</p>' +
-        '<p class="done-msg">' + br(flow().doneSub || D.sub) + '</p>' +
+        (a ? '<p class="done-mission">' + icon(a.icon || 'star', 'done-pin') + '<span><strong>' + esc(D.actionNote) + '</strong> “' + esc(a.label) + '”</span></p>' : '') +
         (s.hasPlace ? '<p class="done-place">' + icon('pin', 'done-pin') + '<span><strong>' + esc(s.place) + '</strong> · ' + esc(s.area) + '</span></p><p class="done-note">' + esc(D.placeNote) + '</p>' : '') +
-        (m ? '<p class="done-mission">' + icon(m.icon || 'star', 'done-pin') + '<span><strong>' + esc(D.missionNote) + '</strong> ' + esc(m.text) + '</span></p>' : '') +
+        (s.feedback ? '<p class="done-note">' + esc(C().feedback.doneNote) + '</p>' : '') +
         (s.prize ? '<p class="done-note">경품 추첨에도 응모되었어요.</p>' : '') +
         (r && r.preview ? '<p class="cp-preview" role="note"><strong>미리보기 모드</strong> · 실제로 저장되지는 않았어요.</p>' : '') +
         '<ul class="end-items" aria-label="오늘 찾은 접근성 아이템">' + items + '</ul>' +
@@ -3921,7 +4027,7 @@ AAG.campaign = {
     fe.textContent = '표시된 칸을 확인해 주세요.';
   }
 
-  const STEPS = { memory: renderMemory, widen: renderWiden, fork: renderFork, place: renderPlace, mission: renderMission };
+  const STEPS = { memory: renderMemory, widen: renderWiden, actions: renderActions, card: () => renderCard(false), place: renderPlace };
 })(window.AAG);
 
 </script>
