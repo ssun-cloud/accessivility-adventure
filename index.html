@@ -786,6 +786,8 @@ AAG.registerTheme({
   world: {
     home: '우리 집',
     fillers: ['세탁소', '꽃집'],
+    homeStyle: 'hanok',     // 우리 집을 한옥으로 ('hanok' 을 지우면 예전 벽돌집)
+    fillerStyle: 'hanok',   // 이웃 가게를 한옥으로
     goal: '우리 동네 축제',
     poster: '동네축제'
   },
@@ -794,7 +796,7 @@ AAG.registerTheme({
     {
       scene: 'entrance',
       title: '가게에 들어가고 싶어요!',
-      place: { sign: '동네상회', style: 'shop' },
+      place: { sign: '서촌 마을상회', style: 'hanok' },
       travel: '가게로 가는 길이에요',
       lead: '어? 입구에 계단이 있네요.',
       question: '더 많은 사람이 편하게 드나들려면\n무엇이 있으면 좋을까요?',
@@ -820,7 +822,7 @@ AAG.registerTheme({
       scene: 'board',
       variant: 'busstop',
       title: '중요한 안내를 놓쳤어요!',
-      place: { sign: '마을버스', route: '07' },
+      place: { sign: '서촌 마을버스', route: '07' },
       travel: '버스정류장으로 가요',
       sound: '띵동~',
       lead: '안내방송이 나왔어요.',
@@ -848,7 +850,7 @@ AAG.registerTheme({
       scene: 'infopoint',
       variant: 'cafe',
       title: '메뉴를 어떻게 확인하지?',
-      place: { sign: '골목카페', board: 'MENU', stand: 'MENU' },
+      place: { sign: '서촌 골목카페', board: 'MENU', stand: 'MENU' },
       travel: '카페에 가 볼까요?',
       lead: '메뉴판에 작은 글씨와 그림만 있어요.',
       question: '메뉴판을 보거나 읽기 어려운 사람도\n메뉴를 확인할 수 있는 방법은 무엇일까요?',
@@ -1962,6 +1964,81 @@ AAG.campaign = {
     for (let x = Math.floor(V.L / 30) * 30; x < V.L + V.bw; x += 30) px.R(b, x, 190, 14, 2, P.lane);
   }
 
+  /* ---------- 한옥 그리기 도구 (기와지붕 · 회벽과 나무 기둥 · 창호) ---------- */
+  A.art = A.art || {};
+  A.art.giwa = function (b, x0, x1, y, h) {           // y = 용마루 위, h = 지붕 높이 → 처마 아래 y 를 돌려줍니다
+    const w = x1 - x0;
+    px.R(b, x0 + Math.round(h * 0.6) - 2, y, w - Math.round(h * 1.2) + 4, 3, P.ink);
+    px.R(b, x0 + Math.round(h * 0.6) - 1, y + 1, w - Math.round(h * 1.2) + 2, 1, '#7d8293');
+    for (let r = 0; r < h; r++) {
+      const inset = Math.round((h - r) * 0.6);
+      px.R(b, x0 + inset, y + 3 + r, w - inset * 2, 1, r % 3 === 0 ? '#4b5060' : '#5f6577');
+    }
+    for (let x = x0 + 5; x < x1 - 5; x += 4) px.R(b, x, y + 5, 1, h - 3, '#474c5b');
+    const ey = y + 3 + h;
+    px.R(b, x0, ey, w, 2, P.ink);
+    px.R(b, x0 - 3, ey - 1, 4, 2, P.ink); px.R(b, x0 - 6, ey - 3, 4, 2, P.ink); px.R(b, x0 - 7, ey - 5, 2, 2, P.ink);   // 들린 처마 끝
+    px.R(b, x1 - 1, ey - 1, 4, 2, P.ink); px.R(b, x1 + 2, ey - 3, 4, 2, P.ink); px.R(b, x1 + 5, ey - 5, 2, 2, P.ink);
+    for (let x = x0 + 3; x < x1 - 3; x += 5) px.R(b, x, ey + 2, 2, 2, P.wood2);                                       // 서까래 끝
+    return ey + 4;
+  };
+  A.art.hanokWall = function (b, x0, x1, yTop, yBot, posts) {
+    px.box(b, x0, yTop, x1 - x0, yBot - yTop, '#f6eedd');
+    px.R(b, x0 - 2, yBot - 7, x1 - x0 + 4, 7, '#bdb5a8');                                                            // 기단(돌)
+    px.R(b, x0 - 2, yBot - 7, x1 - x0 + 4, 1, P.ink2);
+    for (let x = x0 + 2; x < x1; x += 9) px.R(b, x, yBot - 6, 1, 6, '#a29b8f');
+    px.R(b, x0, yTop, x1 - x0, 4, P.wood2); px.R(b, x0, yTop + 4, x1 - x0, 1, P.ink2);                               // 도리
+    (posts || [x0, x1 - 4]).forEach(x => px.R(b, x, yTop, 4, yBot - 7 - yTop, P.wood2));
+  };
+  A.art.changho = function (b, x, y, w, h) {                                                                          // 창살 창
+    px.box(b, x, y, w, h, P.wood2);
+    px.R(b, x + 2, y + 2, w - 4, h - 4, '#fbf4e2');
+    for (let i = x + 5; i < x + w - 3; i += 4) px.R(b, i, y + 2, 1, h - 4, '#d6b98f');
+    for (let j = y + 5; j < y + h - 3; j += 4) px.R(b, x + 2, j, w - 4, 1, '#d6b98f');
+  };
+
+  function homeHanok(b, H, G) {
+    const x = H.x, w = H.w, top = 100;
+    // 낮은 돌담
+    px.box(b, x - 6, 128, 14, WD.BASE - 127, '#c9c1b3');
+    for (let yy = 132; yy < WD.BASE; yy += 6) px.R(b, x - 5, yy, 12, 1, '#a9a194');
+    A.art.giwa(b, x - 4, x + w + 4, 76, 18);
+    A.art.hanokWall(b, x, x + w, top, WD.BASE + 1, [x, x + 40, x + 82, x + w - 4]);
+    A.art.changho(b, x + 8, 110, 28, 24);
+    A.art.changho(b, x + 48, 110, 30, 24);
+    // 대문(나무)
+    px.box(b, x + 88, 106, 34, WD.BASE - 7 - 106, P.wood);
+    px.R(b, x + 104, 107, 2, WD.BASE - 7 - 108, P.wood2);
+    px.R(b, x + 99, 124, 2, 3, P.yellow); px.R(b, x + 107, 124, 2, 3, P.yellow);
+    px.box(b, x + 93, 98, 24, 7, P.cream);
+    G.label({ x: x + 105, y: 101.5, text: G.theme.world.home || '우리 집', size: 4.2, color: P.ink });
+    // 장독과 화분
+    px.ball(b, x + 20, 140, 4, '#8a5a3c'); px.R(b, x + 17, 135, 7, 2, '#6d4530');
+    [[x + 34, P.red], [x + 62, '#ff9fc0']].forEach(p => {
+      const sw = Math.round(Math.sin(G.time * 1.8 + p[0]) * 0.8);
+      px.box(b, p[0], 136, 9, 7, '#d98a5f'); px.disc(b, p[0] + 4 + sw, 132, 4, P.leaf); px.R(b, p[0] + 3 + sw, 129, 3, 3, p[1]);
+    });
+  }
+
+  function fillerHanok(b, F, G) {
+    const x = F.x, w = F.w, top = 92;
+    A.art.giwa(b, x - 3, x + w + 3, 68, 16);
+    A.art.hanokWall(b, x, x + w, top, WD.BASE + 1, [x, x + 52, x + w - 4]);
+    // 나무 현판
+    px.box(b, x + 18, 97, w - 36, 12, P.wood2); px.R(b, x + 19, 98, w - 38, 1, P.wood);
+    G.label({ x: x + w / 2, y: 103, text: F.name, size: 7.4, color: '#fff4e0' });
+    // 진열창(창호 틀 + 유리)
+    px.box(b, x + 6, 112, 44, 30, P.wood2); px.R(b, x + 8, 114, 40, 26, P.glass); px.R(b, x + 27, 114, 2, 26, P.wood2);
+    if (F.kind === 0) ['#ff9f7a', '#7fb0ea', '#ffd66b'].forEach((c, i) => { px.box(b, x + 11 + i * 12, 118, 8, 14, c); });
+    else for (let i = 0; i < 3; i++) { px.disc(b, x + 15 + i * 12, 130, 4, P.leaf); px.R(b, x + 14 + i * 12, 125, 3, 3, ['#ff8fb1', P.yellow, '#c5a3ff'][i]); }
+    px.R(b, x + 10, 116, 2, 10, P.glassHi);
+    // 문
+    px.box(b, x + 60, 112, 32, WD.BASE - 7 - 112, P.wood2); px.R(b, x + 62, 114, 28, WD.BASE - 7 - 116, P.glass2); px.R(b, x + 75, 114, 2, WD.BASE - 7 - 116, P.wood2);
+    if (F.kind === 1) [[x + 8, '#ff8fb1'], [x + 22, P.yellow], [x + 36, P.coral]].forEach(p => {
+      px.box(b, p[0], 145, 9, 6, P.metal2); px.disc(b, p[0] + 4, 142, 4, P.leaf); px.disc(b, p[0] + 4, 140, 2, p[1]);
+    });
+  }
+
   /* ---------- 우리 집 (벽돌 다세대 주택) ---------- */
   function home(b, H, G) {
     const x = H.x, w = H.w, top = 40;
@@ -2130,8 +2207,9 @@ AAG.campaign = {
     far(b, V);
     ground(b, V);
     const vis = (x0, x1) => x1 > V.L - 20 && x0 < V.L + V.bw + 20;
-    if (vis(W.home.x, W.home.x + W.home.w)) home(b, W.home, G);
-    W.fillers.forEach(F => { if (vis(F.x, F.x + F.w)) filler(b, F, G); });
+    const tw = G.theme.world || {};
+    if (vis(W.home.x, W.home.x + W.home.w)) (tw.homeStyle === 'hanok' ? homeHanok : home)(b, W.home, G);
+    W.fillers.forEach(F => { if (vis(F.x - 8, F.x + F.w + 8)) (tw.fillerStyle === 'hanok' ? fillerHanok : filler)(b, F, G); });
     W.scenes.forEach(sc => { if (vis(sc.x - 30, sc.x + sc.w + 30)) sc.def.draw(b, sc.st, G); });
     if (vis(W.plaza.x, W.plaza.x + W.plaza.w)) plaza(b, W.plaza, G, t);
   };
@@ -2158,7 +2236,8 @@ AAG.campaign = {
   const STY = {
     shop: { wall: '#fdeed3', band: '#efd6ad', sign: P.mint2, signText: '#ffffff', awn: [P.coral, '#fff7ea'], trim: '#f3d9ae', win: 'goods' },
     theater: { wall: '#a171a6', band: '#7b4f82', sign: P.yellow, signText: P.ink, awn: null, trim: '#caa0cf', bulbs: true, win: 'posters' },
-    school: { wall: '#f4e7c6', band: '#e2cfa3', sign: P.leaf2, signText: '#ffffff', awn: null, trim: '#e6d3a9', clock: true, win: 'class' }
+    school: { wall: '#f4e7c6', band: '#e2cfa3', sign: P.leaf2, signText: '#ffffff', awn: null, trim: '#e6d3a9', clock: true, win: 'class' },
+    hanok: { wall: '#f6eedd', band: '#bdb5a8', sign: P.wood2, signText: '#fff4e0', awn: null, trim: '#f6eedd', win: 'goods', hanok: true }
   };
   const FLOOR = 139; // 문턱(층) 높이
 
@@ -2211,7 +2290,13 @@ AAG.campaign = {
       // 벽
       px.box(b, g.b0, top, g.b1 - g.b0, WD.BASE - top + 1, S.wall);
       px.R(b, g.b0 + 1, WD.BASE - 8, g.b1 - g.b0 - 2, 7, S.band);
+      if (S.hanok) {
+        A.art.giwa(b, g.b0 - 6, g.b1 + 6, top - 24, 18);
+        px.R(b, g.b0, top, g.b1 - g.b0, 4, P.wood2); px.R(b, g.b0, top + 4, g.b1 - g.b0, 1, P.ink2);
+        [g.b0, g.b1 - 4].forEach(px0 => px.R(b, px0, top, 4, WD.BASE - top - 7, P.wood2));
+      } else {
       px.R(b, g.b0 - 2, top - 3, g.b1 - g.b0 + 4, 6, S.trim); px.R(b, g.b0 - 2, top - 4, g.b1 - g.b0 + 4, 1, P.ink); px.R(b, g.b0 - 2, top + 3, g.b1 - g.b0 + 4, 1, P.ink2);
+      }
       if (S.clock) {
         const cx = (g.b0 + g.b1) / 2;
         px.box(b, cx - 12, top - 20, 24, 18, S.trim); px.ball(b, cx, top - 11, 6, '#ffffff'); px.R(b, cx, top - 15, 1, 4, P.ink); px.R(b, cx, top - 11, 3, 1, P.ink);
