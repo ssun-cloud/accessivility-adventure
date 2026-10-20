@@ -3011,8 +3011,41 @@ AAG.campaign = {
     clearInterval(mTimer); mTimer = null;
     if (bus) { const b = bus; try { b.gain.setTargetAtTime(0, ctx.currentTime, 0.08); } catch (e) { /* 무시 */ } setTimeout(() => { try { b.disconnect(); } catch (e) { /* 무시 */ } }, 600); bus = null; }
   }
+  /* ---------- 휴대폰 소리 켜기 ----------
+   * ① 휴대폰 브라우저는 '손가락으로 누른 그 순간'에만 소리를 켜 줘요. 화면을 처음 누를 때 바로 켭니다.
+   * ② 아이폰은 무음 모드(옆 스위치)면 게임 소리를 막아요. 소리 없는 오디오를 함께 틀어
+   *    음악 앱처럼 소리가 나게 합니다(아이폰 사파리 17 이상은 audioSession 으로 바로 지정). */
+  let keepAlive = null;
+  function silentWavURL() {
+    const rate = 8000, n = rate / 2, buf = new ArrayBuffer(44 + n), v = new DataView(buf);
+    const w = (o, str) => { for (let i = 0; i < str.length; i++) v.setUint8(o + i, str.charCodeAt(i)); };
+    w(0, 'RIFF'); v.setUint32(4, 36 + n, true); w(8, 'WAVE'); w(12, 'fmt ');
+    v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+    v.setUint32(24, rate, true); v.setUint32(28, rate, true); v.setUint16(32, 1, true); v.setUint16(34, 8, true);
+    w(36, 'data'); v.setUint32(40, n, true);
+    for (let i = 0; i < n; i++) v.setUint8(44 + i, 128);
+    return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
+  }
+  function phoneUnlock() {
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) { /* 무시 */ }
+    if (!ensure()) return;
+    try { const b = ctx.createBuffer(1, 1, 22050), src = ctx.createBufferSource(); src.buffer = b; src.connect(ctx.destination); src.start(0); } catch (e) { /* 무시 */ }
+    try {
+      if (!keepAlive) {
+        keepAlive = document.createElement('audio');
+        keepAlive.src = silentWavURL(); keepAlive.loop = true;
+        keepAlive.setAttribute('playsinline', ''); keepAlive.setAttribute('aria-hidden', 'true');
+      }
+      if (keepAlive.paused && !document.hidden) { const pr = keepAlive.play(); if (pr && pr.catch) pr.catch(() => {}); }
+    } catch (e) { /* 무시 */ }
+  }
+  ['pointerdown', 'touchend', 'click', 'keydown'].forEach(ev => document.addEventListener(ev, phoneUnlock, { capture: true, passive: true }));
+
   // 다른 앱·탭으로 가면 멈추고, 돌아오면 다시 재생
-  document.addEventListener('visibilitychange', () => { if (document.hidden) musicHalt(); else musicOn(); });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { musicHalt(); if (keepAlive) try { keepAlive.pause(); } catch (e) { /* 무시 */ } }
+    else musicOn();
+  });
 
   A.audio = {
     unlock: ensure,
