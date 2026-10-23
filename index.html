@@ -1290,11 +1290,13 @@ AAG.campaign = {
 
   /* ④ 마무리 — 한마디 (modules.feedback 이 true 일 때만) */
   feedback: {
-    title: '게임을 하면서 떠오른 생각이 있나요?',
-    lead: '새롭게 알게 된 점이나 우리 복지관에 전하고 싶은 말이 있다면 자유롭게 남겨주세요.',
-    label: '한마디',
-    placeholder: '떠오른 생각을 편하게 적어주세요.',
+    title: '우리 동네에도 이런 방법이 있으면 좋겠다 싶은 곳이 있나요?',
+    lead: '오늘 만난 경사로, 문자 안내, 여러 방법의 정보를 떠올려 보세요.',
+    label: '있으면 좋겠다 싶은 곳',
+    placeholder: '예) 주민센터 안내문이 큰 글씨로도 있으면 좋겠어요',
     optional: '안 적어도 괜찮아요',
+    help: '이름이나 연락처는 적지 말아 주세요.',
+    share: '내 의견을 이름 없이 캠페인 결과(홈페이지·결과보고서)에 소개해도 괜찮아요. (선택)',
     doneNote: '남겨주신 이야기도 잘 받았어요.'
   },
 
@@ -3789,6 +3791,7 @@ AAG.campaign = {
         actionLabel: act ? act.label : '',
         actionCardSaved: !!s.actionSaved,
         feedback: (s.feedback || '').slice(0, 200),
+        feedbackShare: !!(s.feedback && s.share),                     // 의견을 이름 없이 캠페인 결과에 소개해도 되는지
         prize: !!s.prize,
         name: s.prize ? s.name : '',
         contact: s.prize ? s.contact : '',
@@ -3900,7 +3903,7 @@ AAG.campaign = {
     ctx = {
       theme, found, opts: opts || {},
       s: { memory: null, everyday: [], everydayOther: '', hasPlace: null, place: '', area: '', placeFeatures: [], placeOther: '',
-        action: null, actionSaved: false, feedback: '',
+        action: null, actionSaved: false, feedback: '', share: false,
         mission: null, missionSaved: false, missionRerolls: 0, prize: false, name: '', contact: '', consent: false, news: false, newsContact: '' }
     };
     root = document.getElementById('campaign');
@@ -4188,7 +4191,10 @@ AAG.campaign = {
       head(3, title, lead, s.hasPlace ? 'place' : 'card') +
       '<form id="cpFinish" novalidate>' +
         (fb ? '<div class="field"><label for="cpFeedback">' + esc(Fb.label) + ' <span class="opt">' + esc(Fb.optional) + '</span></label>' +
-          '<textarea id="cpFeedback" rows="3" maxlength="200" placeholder="' + esc(Fb.placeholder) + '">' + esc(s.feedback) + '</textarea></div>' : '') +
+          (Fb.help ? '<p class="field-help" id="cpFeedbackHelp">' + esc(Fb.help) + '</p>' : '') +
+          '<textarea id="cpFeedback" rows="3" maxlength="200" placeholder="' + esc(Fb.placeholder) + '"' + (Fb.help ? ' aria-describedby="cpFeedbackHelp"' : '') + '>' + esc(s.feedback) + '</textarea>' +
+          (Fb.share ? '<label class="check" id="cpShareWrap"' + (s.feedback ? '' : ' hidden') + '><input type="checkbox" id="cpShare"' + (s.share ? ' checked' : '') + '><span>' + esc(Fb.share) + '</span></label>' : '') +
+          '</div>' : '') +
         (pz ?
           '<fieldset class="prize">' +
             (fb ? '<p class="prize-lead">' + esc(Pz.lead) + '</p>' : '') +
@@ -4226,6 +4232,8 @@ AAG.campaign = {
     );
     const form = root.querySelector('#cpFinish'), fe = root.querySelector('#cpFormErr');
     const box = root.querySelector('#cpPrize'), nbox = root.querySelector('#cpNews');
+    const fta = root.querySelector('#cpFeedback'), shareWrap = root.querySelector('#cpShareWrap');
+    if (fta && shareWrap) fta.addEventListener('input', () => { shareWrap.hidden = !fta.value.trim(); });
     const syncNews = () => {
       if (!nbox) return;
       const same = !!(box && box.checked);
@@ -4254,6 +4262,7 @@ AAG.campaign = {
       const pretty = d => d.replace(/^(\d{3})(\d{3,4})(\d{4})$/, '$1-$2-$3');
       const ta = root.querySelector('#cpFeedback');
       s.feedback = ta ? ta.value.trim() : '';
+      const sh = root.querySelector('#cpShare'); s.share = !!(s.feedback && sh && sh.checked);
       s.website = root.querySelector('#cpWeb').value;
       s.prize = !!(box && box.checked);
       s.news = !!(nbox && nbox.checked);
